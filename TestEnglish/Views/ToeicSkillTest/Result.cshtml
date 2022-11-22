@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "Result";
+}
+@section styles{
+    <style>
+        .skill-test {
+            display: flex;
+            flex-direction: row;
+        }
+
+            .skill-test > div {
+            }
+
+            .skill-test .image {
+            }
+
+                .skill-test .image img {
+                    width: 300px;
+                    height: 300px;
+                    object-fit: contain;
+                }
+
+            .skill-test .audio {
+            }
+
+            .skill-test .description {
+            }
+
+            .skill-test .question {
+            }
+
+            .skill-test .answer-list {
+            }
+
+                .skill-test .answer-list ul {
+                    list-style: none;
+                }
+
+                    .skill-test .answer-list ul li {
+                        padding: 5px;
+                    }
+
+                        .skill-test .answer-list ul li a {
+                            text-decoration: none;
+                            color: black;
+                            display: flex;
+                            gap: 10px;
+                        }
+
+            .skill-test .action {
+                display: flex;
+                justify-content: space-between;
+            }
+
+        #question-number-table {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            border-radius: 5px;
+            border: .5px solid #cecece;
+        }
+
+            #question-number-table > div {
+                padding: 10px 12px;
+            }
+
+                #question-number-table > div > a {
+                    display: flex;
+                    width: 30px;
+                    height: 30px;
+                    justify-content: center;
+                    align-items: center;
+                    border: .5px solid #999999;
+                    border-radius: 30px;
+                    text-decoration: none;
+                    color: black;
+                }
+
+                    #question-number-table > div > a.active {
+                        background-color: orange !important;
+                        color: white;
+                        font-weight: bold;
+                    }
+
+                    #question-number-table > div > a.correct {
+                        background-color: #d1ffc2;
+                    }
+
+                    #question-number-table > div > a.incorrect {
+                        background-color: #ffcccc;
+                    }
+
+        a.disabled {
+            pointer-events: none;
+        }
+    </style>
+}
+<div style="height: 50px;"></div>
+<div class="section">
+    <div class="section-content">
+        <input type="hidden" id="UserTestResultId" value="@ViewBag.Id" />
+
+        <div class="skill-test">
+            <div style="flex: 1; display: flex; flex-direction: column; padding: 30px; gap: 10px; ">
+                <div class="image"></div>
+                <div class="audio"></div>
+                <div class="description"></div>
+                <div class="question"></div>
+                <div class="answer-list">
+                    <ul></ul>
+                </div>
+
+
+            </div>
+            <div style="width: 300px; padding: 10px; display: flex; flex-direction: column; gap: 10px; ">
+                <div id="result-info">
+                    <div class="time">
+                        <div>Thời gian làm bài:</div>
+                        <div class="value"></div>
+                    </div>
+                    <div class="answer">
+                        <div>Số câu đúng:</div>
+                        <div class="value"></div>
+                    </div>
+                </div>
+                <div id="question-number-table">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 50px;"></div>
+
+
+
+
+@section scripts {
+    <script>
+        let _listQuestion = [];
+        let _currentQuestionIndex = 0;
+
+        const LoadTestSkill = async function () {
+            const id = $('#UserTestResultId').val();
+            let rq = await fetch('/api/toeicskilltest/GetResult?id=' + id, {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+
+            let rs = await rq.json();
+
+            if (CheckErrorResponse(rs) === false) return;
+
+            if (GetObjectProperty(rs, 'status') !== Enum.ResponseStatus.SUCCESS) return;
+
+            _listQuestion = JSON.parse(GetObjectProperty(rs.data, 'ListQuestion', '[]'));
+            console.log(_listQuestion);
+            let secondsDoTest = GetObjectProperty(rs.data, 'TotalTimeEslapse', 0);
+            let minuteDoTest = Math.floor(secondsDoTest / 60);
+            if (minuteDoTest < 10) minuteDoTest = '0' + minuteDoTest;
+            secondsDoTest = secondsDoTest % 60;
+            if (secondsDoTest < 10) secondsDoTest = '0' + secondsDoTest;
+            $('#result-info .time .value').text(`${minuteDoTest} phút ${secondsDoTest} giây / ${GetObjectProperty(rs.data, 'TotalTime', 0)} phút`)
+            $('#result-info .answer .value').text(`${GetObjectProperty(rs.data, 'TotalCorrect', 0)} / ${GetObjectProperty(rs.data, 'TotalQuestion', 0)}`)
+
+            RenderQuestion();
+            RenderQuestionNumberTable();
+        }
+
+        const SelectQuestion = function (el) {
+            const questionIndex = $(el).data('question-index');
+            _currentQuestionIndex = questionIndex;
+            RenderQuestion();
+            RenderQuestionNumberTable();
+        }
+
+        const RenderQuestion = function () {
+            const question = _listQuestion[_currentQuestionIndex];
+            if (GetObjectProperty(question, 'Picture') !== '') $('.skill-test .image').html(`<img src="${GetObjectProperty(question, 'Picture')}" />`);
+            if (GetObjectProperty(question, 'Audio') !== '') $('.skill-test .audio').html(`<audio controls><source src="${GetObjectProperty(question, 'Audio')}" type="audio/mp3">Your browser does not support the audio element.</audio>`);
+            if (GetObjectProperty(question, 'Description') !== '') $('.skill-test .description').html(GetObjectProperty(question, 'Description'));
+            if (GetObjectProperty(question, 'Question') !== '') $('.skill-test .question').html(GetObjectProperty(question, 'Question'));
+
+            $('.skill-test .answer-list ul').html('');
+            for (let indexAnser = 0; indexAnser < question.Answer.length; indexAnser++) {
+                const answer = question.Answer[indexAnser];
+                let icon = '<i class="fa-regular fa-circle"></i>';
+                if (answer.Selected === true) icon = '<i class="fa-solid fa-circle"></i>';
+                $('.skill-test .answer-list ul').append(`<li>
+<a class="" ><div class="icon">${icon}</div><div class="text">${GetObjectProperty(answer, 'Text')}</div></a>
+</li>`);
+            }
+        }
+
+        const RenderQuestionNumberTable = function () {
+            $('#question-number-table').html('');
+            for (let indexQuestion = 0; indexQuestion < _listQuestion.length; indexQuestion++) {
+                const question = _listQuestion[indexQuestion];
+                let classes = '';
+                if (indexQuestion === _currentQuestionIndex) classes += 'active ';
+                if (question.Answered === true) {
+                    if (question.IsCorrectAnswer === true) {
+                        classes += 'correct ';
+                    } else {
+                        classes += 'incorrect ';
+                    }
+                }
+
+                $('#question-number-table').append(`<div><a  onclick="SelectQuestion(this);" data-question-index="${indexQuestion}" class="${classes}" >${indexQuestion + 1}</a></div>`);
+            }
+        }
+
+        LoadTestSkill();
+    </script>
+}

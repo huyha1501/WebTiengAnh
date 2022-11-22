@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "ĐĂNG NHẬP / ĐĂNG KÝ";
+    ViewBag.Menu = "dang-nhap";
+}
+
+@section styles{
+    <style>
+
+    </style>
+}
+<div class="section">
+    <div class="section-content">
+        <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+            <div style="padding: 30px;">
+                <div class="login-logo"></div>
+            </div>
+            <div class="login-form-section">
+                <div class="login-form-tab">
+                    <div class="login-form-tab-button">
+                        <a href="/dang-nhap" class="@(ViewBag.Menu == "dang-nhap" ? "active" : "")">ĐĂNG NHẬP</a>
+                    </div>
+                    <div class="login-form-tab-button">
+                        <a href="/dang-ky" class="@(ViewBag.Menu == "dang-ky" ? "active" : "")">ĐĂNG KÝ</a>
+                    </div>
+                </div>
+                <div class="login-form" style="display: @(ViewBag.Menu == "dang-nhap" ? "flex" : "none")">
+                    <div class="login-form-container">
+                        <div class="login-form-input-group">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <input id="login-email" placeholder="Email" />
+                        </div>
+                        <div class="login-form-input-group">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                            <input type="password" id="login-password" placeholder="Mật khẩu" />
+                        </div>
+                        <div class="login-form-button">
+                            <a class="btn-login" onclick="LogIn();">Đăng nhập</a>
+                            <a class="btn-forgot-password">Quên mật khẩu?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        
+            fetch('/api/user/getuserinfo', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            }).then(rs => rs.json())
+                .then((rs) => {
+                    if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                        window.location.href = '/';
+                    }
+                });
+            
+    
+        var LogIn = async function () {
+            let model = {
+                Email: $('#login-email').val(),
+                Password: $('#login-password').val()
+            }
+            if (model.Email === '' || model.Email === null || typeof model.Email === 'undefined') {
+                alert('Email không được để trống.');
+                return;
+            }
+            if (model.Password === '' || model.Password === null || typeof model.Password === 'undefined') {
+                alert('Mật khẩu không được để trống.');
+                return;
+            }
+
+            let rq = await fetch('/api/user/login', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(model)
+            });
+
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                SetCookie('UserToken', GetObjectProperty(rs.data, 'token'));
+                window.location.href = '/';
+            }
+        }
+
+        $('#login-password').on('keyup', function (e) {
+            if (e.keyCode === 13) LogIn();
+        });
+    </script>
+}

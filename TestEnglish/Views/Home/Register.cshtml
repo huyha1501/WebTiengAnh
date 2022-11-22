@@ -1,0 +1,158 @@
+﻿
+@{
+    ViewBag.Title = "ĐĂNG NHẬP / ĐĂNG KÝ";
+    ViewBag.Menu = "dang-ky";
+}
+
+@section styles{
+    <style>
+
+    </style>
+}
+<div class="section">
+    <div class="section-content">
+        <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+            <div style="padding: 30px;">
+                <div class="login-logo"></div>
+            </div>
+            <div class="login-form-section">
+                <div class="login-form-tab">
+                    <div class="login-form-tab-button">
+                        <a href="/dang-nhap" class="@(ViewBag.Menu == "dang-nhap" ? "active" : "")">ĐĂNG NHẬP</a>
+                    </div>
+                    <div class="login-form-tab-button">
+                        <a href="/dang-ky" class="@(ViewBag.Menu == "dang-ky" ? "active" : "")">ĐĂNG KÝ</a>
+                    </div>
+                </div>
+                <div class="signup-form" style="display: @(ViewBag.Menu == "dang-ky" ? "flex" : "none")">
+                    <div class="signup-form-container">
+                        <div class="signup-form-input-group">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <input id="signup-name" placeholder="Họ tên" />
+                        </div>
+                        <div class="signup-form-input-group">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                            <input id="signup-email" placeholder="Email" />
+                        </div>
+                        <div class="signup-form-input-group">
+                            <i class="fa fa-phone" aria-hidden="true"></i>
+                            <input id="signup-phone" type="tel" placeholder="Số điện thoại" />
+                        </div>
+                        <div class="signup-form-input-group">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                            <input type="password" id="signup-password" placeholder="Mật khẩu" />
+                        </div>
+                        <div class="signup-form-input-group">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                            <input type="password" id="signup-confirm-password" placeholder="Xác nhận mật khẩu" />
+                        </div>
+                        <div class="check-term">
+                            <label>
+                                <input type="checkbox" id="signup-accept-term" />
+                                Tôi đồng ý với các điều khoản của website
+                            </label>
+                        </div>
+                        <div style="border-bottom: .5px solid #c7c7c7;"></div>
+                        <div class="signup-form-button">
+                            <a class="btn-signup" onclick="SignUp();">Đăng ký</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var SignUp = function () {
+            var model = {
+                Email: $('#signup-email').val(),
+                Password: $('#signup-password').val(),
+                Name: $('#signup-name').val(),
+                Phone: $('#signup-phone').val(),
+            }
+
+            model.Phone = model.Phone.replace(/\+84/g,'0');
+            model.Phone = model.Phone.replace(/ /g,'');
+            model.Phone = model.Phone.replace(/[^0-9]/g,'');
+            $('#signup-phone').val(model.Phone );
+
+            const confirmPass = $('#signup-confirm-password').val();
+
+            if (model.Name === '' || model.Name === null || typeof model.Name === 'undefined') {
+                alert('Họ tên không được để trống.');
+                return;
+            }
+            if (model.Email === '' || model.Email === null || typeof model.Email === 'undefined') {
+                alert('Email không được để trống.');
+                return;
+            }
+            else {
+                if (model.Email.indexOf('@@') < 0) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                var emailPart = model.Email.split('@@');
+                if (emailPart.length < 2) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                if (emailPart[1] === '' || emailPart[1] === null || typeof emailPart[1] === 'undefined') {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                var emailPart1 = emailPart[1].split('.');
+                if (emailPart1.length < 2) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+                if (emailPart1[1] === '' || emailPart1[1] === null || typeof emailPart1[1] === 'undefined') {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+            }
+            if (model.Phone === '' || model.Phone === null || typeof model.Phone === 'undefined') {
+                alert('Số điện thoại không được để trống.');
+                return;
+            }
+            else {
+                if (model.Phone.length < 10 || model.Phone.length > 12) {
+                    alert('Số điện thoại không đúng định dạng.');
+                    return;
+                }
+
+            }
+            if (model.Password === '' || model.Password === null || typeof model.Password === 'undefined') {
+                alert('Mật khẩu không được để trống.');
+                return;
+            }
+            if (confirmPass === '' || confirmPass === null || typeof confirmPass === 'undefined') {
+                alert('Xác nhận mật khẩu không được để trống.');
+                return;
+            }
+            if (model.Password !== confirmPass) {
+                alert('Xác nhận mật khẩu không khớp.');
+                return;
+            }
+            if ($('#signup-accept-term').prop('checked') === false) {
+                alert('Không thể đăng ký nếu bạn không đồng ý với điều khoản của website.');
+                return;
+            }
+            model.Phone = model.Phone.replace(/ /g, '').replace(/[^0-9]/g, '');
+            model.Phone = model.Phone.slice(model.Phone.length - 9, model.Phone.length)
+
+            $.post(Enum.ApiUrl + '/api/User/Register', model, function (rs) {
+                if (CheckErrorResponse(rs) === false) return;
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    alert('Đăng ký tài khoản thành công.');
+                    window.location.href = '/dang-nhap';
+                }
+            });
+        }
+    </script>
+}

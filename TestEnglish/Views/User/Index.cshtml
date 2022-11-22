@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "Tài khoản";
+    ViewBag.Menu = "user";
+}
+
+<div style="height: 50px;"></div>
+<div class="section">
+    <div class="section-content">
+        <div style="display: flex;flex-direction: column;">
+            <div class="section-tab">
+                <a href="/" class="active">Thông tin cá nhân</a>
+                <a href="/" class="">Lịch sử làm bài kiểm tra</a>
+                <a href="/" class="">Lịch sử mua khóa học</a>
+            </div>
+            <div class="main-info-section">
+                <div class="main-manage">
+                    <div class="avatar-section">
+                        <div class="avatar-preview" style="background-image: url()"></div>
+                        <div class="change-avatar">
+                            <a onclick="ChangeAvatar();">Cập nhật ảnh</a>
+                        </div>
+                        <input type="file" id="Avatar" style="display: none;" onchange="ChangeAvatar_OnChange(this);" />
+                    </div>
+                    <div class="info-section">
+                        <div class="info-section-title">Thông tin cơ bản</div>
+                        <div class="info-section-group-input">
+                            <label>Họ và tên</label>
+                            <input id="Name" value="" placeholder="Nhập họ và tên" />
+                        </div>
+                        <div class="info-section-group-input">
+                            <label>Số điện thoại</label>
+                            <input id="Phone" value="" placeholder="Nhập số điện thoại" />
+                        </div>
+                        <div class="info-section-group-input">
+                            <label>Ngày sinh</label>
+                            <input id="BirthDay" value="" type="date" placeholder="Nhập ngày sinh" />
+                        </div>
+                        <div class="button-save">
+                            <a onclick="SaveChange();">Lưu</a>
+                        </div>
+                    </div>
+                    <div class="function-section">
+                        <div>
+                            <a href="#" onclick="ChangePasswordModal.show();">Thay đổi mật khẩu ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="change-password-background" style="display: none;">
+    <div class="change-password-form">
+        <div class="change-password-header">
+            <div class="title">ĐỔI MẬT KHẨU</div>
+            <div class="close-button" onclick="ChangePasswordModal.hide();">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="change-password-body">
+            <div class="change-password-group-input">
+                <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+                <input id="old-password" type="password" placeholder="Nhập mật khẩu cũ" />
+            </div>
+            <div class="change-password-group-input">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+                <input id="new-password" type="password" placeholder="Nhập mật khẩu mới" />
+            </div>
+            <div class="change-password-group-input">
+                <i class="fa fa-lock" aria-hidden="true"></i>
+                <input id="confirm-password" type="password" placeholder="Xác nhận mật khẩu" />
+            </div>
+        </div>
+        <div class="change-password-footer">
+            <div class="change-password-button">
+                <a href="#" onclick="ChangePassword();">Đổi mật khẩu</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var ChangePasswordModal = {
+            show: function () { $('.change-password-background').css('display', 'flex'); },
+            hide: function () { $('.change-password-background').css('display', 'none'); },
+        }
+        var ChangePassword = async function () {
+            var model = {
+                Password: $('#old-password').val(),
+                NewPassword: $('#new-password').val()
+            }
+
+            const confirmPass = $('#confirm-password').val();
+
+            if (model.Password === '' || model.Password === null || typeof model.Password === 'undefined') {
+                alert('Mật khẩu cũ không được để trống.');
+                return;
+            }
+            if (model.NewPassword === '' || model.NewPassword === null || typeof model.NewPassword === 'undefined') {
+                alert('Mật khẩu mới không được để trống.');
+                return;
+            }
+            if (confirmPass === '' || confirmPass === null || typeof confirmPass === 'undefined') {
+                alert('Xác nhận mật khẩu không được để trống.');
+                return;
+            }
+            if (model.NewPassword !== confirmPass) {
+                alert('Xác nhận mật khẩu không khớp.');
+                return;
+            }
+
+            let rq = await fetch(Enum.ApiUrl + '/api/User/ChangePassword', {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            });
+
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                alert('Đã cập nhật mật khẩu thành công.');
+                window.location.reload();
+            }
+        }
+
+        const getInfoUser = async function () {
+            let rq = await fetch(Enum.ApiUrl + '/api/user/GetUserInfo', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            console.log(rs);
+            if (CheckErrorResponse(rs) === false) return;
+            $('.avatar-preview').css('background-image', 'url(' + GetObjectProperty(rs.data, 'Avatar') + ')');
+            $('#Name').val(GetObjectProperty(rs.data, 'Name'));
+            $('#Phone').val('0' + GetObjectProperty(rs.data, 'Phone'));
+            $('#BirthDay').val(GetObjectProperty(rs.data, 'BirthDay'));
+        }
+        getInfoUser();
+    </script>
+}
+
+

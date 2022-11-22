@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@section styles{
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .test {
+            display: flex;
+            padding: 10px;
+        }
+
+            .test .test-name {
+                flex: 1;
+            }
+
+            .test .test-time {
+                width: 200px;
+                justify-content: center;
+                display: flex;
+            }
+
+            .test .test-action {
+                width: 200px;
+                justify-content: center;
+                display: flex;
+            }
+    </style>
+}
+<div style="height: 50px;"></div>
+<div class="section">
+    <div class="section-content">
+        <input type="hidden" id="Part" value="@ViewBag.Part" />
+        <div style="display:flex;flex-direction:column;">
+            <ul>
+                <li>
+                    <div class="test">
+                        <div class="test-name">Bài kiểm tra</div>
+                        <div class="test-time">Thời gian làm bài</div>
+                        <div class="test-action"></div>
+                    </div>
+                </li>
+            </ul>
+            <ul id="list-test">
+            </ul>
+        </div>
+    </div>
+</div>
+<div style="height: 50px;"></div>
+@section scripts {
+    <script>
+        const LoadListTest = async function () {
+            const part = $('#Part').val();
+            let rq = await fetch('/api/toeicskilltest/GetListSkillTest?part=' + part, {
+                headers: Enum.OptionHeaderDefault,
+                method: 'get'
+            });
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+
+                $('#list-test').html('');
+                for (let indexTest = 0; indexTest < rs.data.length; indexTest++) {
+                    const item = rs.data[indexTest];
+                    console.log(item)
+                    $('#list-test').append(`<li>
+<div class="test">
+<div class="test-name">${GetObjectProperty(item, 'Name')}</div>
+<div class="test-time">${GetObjectProperty(item, 'TotalTime')} phút</div>
+<div class="test-action"><a href="/skill-test/question/${GetObjectProperty(item, 'ToeicSkillTestId')}">Làm bài</a></div>
+</div></li>`);
+
+                }
+
+
+            }
+        }
+        LoadListTest();
+    </script>
+}
