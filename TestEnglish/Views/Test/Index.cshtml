@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewBag.Title = "Kiểm tra";
+    ViewBag.Menu = "test";
+}
+
+@section styles{
+    <style>
+    </style>
+}
+<div style="height: 50px;"></div>
+<div class="section">
+    <div class="section-content">
+        <div style="display: flex;flex-direction: row;">
+            <!--Lựa chọn kiểu test _ Begin-->
+            <div style="flex: 1;display: flex;flex-direction: column;">
+                <!--SKILL TEST _ Begin-->
+                <div class="test-question-section">
+                    <div class="test-question-section-header">
+                        <div class="test-question-section-title">SKILL TEST</div>
+                    </div>
+                    <div class="test-question-section-body">
+                        <div class="quick-test-online-section">
+                            <div class="quick-skill-test-online">
+                                <div>
+                                    <a href="/skill-test/1">Part 1 - Photographs</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/2">Part 2 - Question-Response</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/3">Part 3 - Conversations</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/4">Part 4 - Short Talks</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/5">Part 5 - Incomplete Sentences</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/6">Part 6 - Error Recognition or Text Completion</a>
+                                </div>
+                                <div>
+                                    <a href="/skill-test/7">Part 7 - Reading Comprehension</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--SKILL TEST _ End-->
+                <!--MINI TEST _ Begin-->
+                <!--<div class="test-question-section">
+                    <div class="test-question-section-header">
+                        <div class="test-question-section-title">MINI TEST</div>
+                    </div>
+                    <div class="test-question-section-body">
+                        <div style="display: flex;flex-direction: column;">
+                            <div style="padding: 5px 0;">
+                                <a href=""></a>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; justify-content: flex-end; padding: 10px;">
+                            <div>
+                                <a href="/test-online/test/mini">Xem tất cả >></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <!--MINI TEST _ End-->
+                <!--FULL TEST _ Begin-->
+                <!--<div class="test-question-section">
+                    <div class="test-question-section-header">
+                        <div class="test-question-section-title">FULL TEST</div>
+                    </div>
+                    <div class="test-question-section-body">
+                        <div style="display: flex;flex-direction: column;">
+                            <div style="padding: 5px 0;">
+                                <a href=""></a>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; justify-content: flex-end; padding: 10px;">
+                            <div>
+                                <a href="/test-online/test/full">Xem tất cả >></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                <!--FULL TEST _ End-->
+            </div>
+            <!--Lựa chọn kiểu test _ End-->
+            <div style="width: 350px; display: flex;flex-direction: column;">
+                <div class="send-request-section">
+                    <div class="request-form-title">ĐĂNG KÝ TƯ VẤN</div>
+                    <div style="border-bottom: .5px solid black;"></div>
+                    <div class="request-form-input">
+                        <input id="request_name" placeholder="Họ và tên" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_phone" placeholder="Số điện thoại" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_email" placeholder="Email" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_content" placeholder="Nội dung cần tư vấn" />
+                    </div>
+                    <div class="request-form-button">
+                        <a class="button-send-request" onclick="SendRequestHelp();">TƯ VẤN NGAY</a>
+                    </div>
+                </div>
+                <div style="height: 50px;"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        const SendRequestHelp = async function () {
+            let model = {
+                Name: $('#request_name').val(),
+                Phone: $('#request_phone').val(),
+                Email: $('#request_email').val(),
+                ContentRequest: $('#request_content').val(),
+            }
+            model.Phone = model.Phone.replace(/\+84/g, '0');
+            model.Phone = model.Phone.replace(/ /g, '');
+            model.Phone = model.Phone.replace(/[^0-9]/g, '');
+            $('#request_phone').val(model.Phone);
+
+            if (model.Name === '' || model.Name === null || typeof model.Name === 'undefined') {
+                alert('Họ và tên không được để trống.');
+                return;
+            }
+            if (model.Phone === '' || model.Phone === null || typeof model.Phone === 'undefined') {
+                alert('Số điện thoại không được để trống.');
+                return;
+            }
+            else {
+                if (model.Phone.length < 10 || model.Phone.length > 12) {
+                    alert('Số điện thoại không đúng định dạng.');
+                    return;
+                }
+
+            }
+            if (model.Email === '' || model.Email === null || typeof model.Email === 'undefined') {
+                alert('Email không được để trống.');
+                return;
+            }
+            else {
+                if (model.Email.indexOf('@@') < 0) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                var emailPart = model.Email.split('@@');
+                if (emailPart.length < 2) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                if (emailPart[1] === '' || emailPart[1] === null || typeof emailPart[1] === 'undefined') {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+                var emailPart1 = emailPart[1].split('.');
+                if (emailPart1.length < 2) {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+                if (emailPart1[1] === '' || emailPart1[1] === null || typeof emailPart1[1] === 'undefined') {
+                    alert('Email không đúng định dạng.');
+                    return;
+                }
+
+            }
+            
+            console.log(model);
+
+            let rq = await fetch(Enum.ApiUrl + '/api/HelpRequest/InsertQuestion', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(model)
+            })
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                alert('Đã gửi thành công');
+                window.location.href = '/test';
+            }
+        }
+    </script>
+    }

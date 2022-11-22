@@ -1,0 +1,233 @@
+﻿@using TestEnglish.Models
+@using TestEnglish.Providers;
+@{
+
+    //  List<Banner> lsBanner = (List<Banner>)ViewBag.ListBanner;
+    List<FeedBackView> lsFeedbacks = (List<FeedBackView>)ViewBag.Feedback;
+    //  List<News> lsnews = (List<News>)ViewBag.ListNews;
+    List<Course> lscourse = (List<Course>)ViewBag.ListCourse;
+    List<ToeicMiniTest> lsminitest = (List<ToeicMiniTest>)ViewBag.ListToeicMiniTest;
+
+    ViewBag.Title = "Trang chủ";
+    ViewBag.Menu = "home";
+}
+@section styles{
+    <link href="/Content/slick/slick.css" rel="stylesheet" />
+    <link href="/Content/slick/slick-theme.css" rel="stylesheet" />
+    <style>
+    </style>
+}
+<div class="home-content">
+    <div class="sectiom-banner">
+        <div class="list-banner">
+            <div class="item-banner" style="background-image:url('/files/Banner/banner1.png')">
+            </div>
+            <div class="item-banner" style="background-image: url('/files/Banner/banner2.png') ">
+            </div>
+            <div class="item-banner" style="background-image: url('/files/Banner/banner3.png') ">
+            </div>
+        </div>
+    </div>
+    <div class="section-news">
+        <div class="news-content">
+            <div class="news-info">
+                <div class="news-header">
+                    TIN NỔI BẬT
+                </div>
+                <div id="list-news">
+                    <div href="" class="item-news">
+                        <div class="background-news" style="background-image:url('/files/News/News1.jpg')">
+                        </div>
+                        <div class="content-news">
+                            Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                        </div>
+                    </div>
+                    <div href="" class="item-news">
+                        <div class="background-news" style="background-image: url('/files/News/News1.jpg')">
+                        </div>
+                        <div class="content-news">
+                            Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                        </div>
+                    </div>
+                    <div href="" class="item-news">
+                        <div class="background-news" style="background-image: url('/files/News/News1.jpg')">
+                        </div>
+                        <div class="content-news">
+                            Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div style="width: 350px; display: flex;flex-direction: column;">
+                <div class="send-request-section">
+                    <div class="request-form-title">ĐĂNG KÝ TƯ VẤN</div>
+                    <div style="border-bottom: .5px solid black;"></div>
+                    <div class="request-form-input">
+                        <input id="request_name" placeholder="Họ và tên" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_phone" placeholder="Số điện thoại" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_email" placeholder="Email" />
+                    </div>
+                    <div class="request-form-input">
+                        <input id="request_content" placeholder="Nội dung cần tư vấn" />
+                    </div>
+                    <div class="request-form-button">
+                        <a class="button-send-request" onclick="SendRequestHelp();">TƯ VẤN NGAY</a>
+                    </div>
+                </div>
+                <div style="height: 50px;"></div>
+
+            </div>
+        </div>
+    </div>
+    <div class="section-package">
+        <div class="form-pakage">
+            <div class="pakage-info">
+                CÁC KHOÁ HỌC TẠI ATEN
+            </div>
+            <div class="list-pakage">
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png')">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png') ">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png') ">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png') ">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png') ">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+                <div href="" class="item-pakage">
+                    <div class="background-pakage" style="background-image: url('/files/Courses/course2.png') ">
+                    </div>
+                    <div class="description-pakage">
+                        Xây gốc tiếng anh
+                    </div>
+                    <div class="content-pakage">
+                        Chuẩn hóa ngữ âm, ngữ điệu, và giao tiếp với những chủ đề cơ bản...
+                    </div>
+                    <div class="pice">
+                        1.900.000 đ
+                    </div>
+                </div>
+            </div>
+            <a class="button" style=" text-align: center; margin: 0 auto; color: black;">Xem thêm</a>
+        </div>
+    </div>
+
+    <div class="section-feedback">
+        <div class="form-feedback">
+            <div class="feedback-info">
+                CẢM NHẬN HỌC VIÊN
+            </div>
+            <div class="list-feedback">
+                <div href="" class="item-feedback">
+                    <div class="content-feedback">
+                        Môi trường chuyên nghiệp, giảng viên có kinh nghiệm nhiều năm, hỗ trợ tư vấn nhiệt tình
+                    </div>
+                    <div class="background-feedback" style="background-image: url('/files/feedback/feedback2.jpg') ">
+                    </div>
+                    <div class="name-feedback">
+                        Alice
+                    </div>
+                </div>
+                <div href="" class="item-feedback">
+                    <div class="content-feedback">
+                        Môi trường chuyên nghiệp, giảng viên có kinh nghiệm nhiều năm, hỗ trợ tư vấn nhiệt tình
+                    </div>
+                    <div class="background-feedback" style="background-image: url('/files/feedback/feedback2.jpg')">
+                    </div>
+                    <div class="name-feedback">
+                        Alice
+                    </div>
+                </div>
+                <div href="" class="item-feedback">
+                    <div class="content-feedback">
+                        Môi trường chuyên nghiệp, giảng viên có kinh nghiệm nhiều năm, hỗ trợ tư vấn nhiệt tình
+                    </div>
+                    <div class="background-feedback" style="background-image: url('/files/feedback/feedback2.jpg')">
+                    </div>
+                    <div class="name-feedback">
+                        Alice
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="/Content/slick/slick.min.js"></script>
+    <script>
+        $('.list-banner').slick({
+            autoplay: true,
+            autoplaySpeed: 3000,
+            prevArrow: false,
+            nextArrow: false,
+            dot: false
+        });
+
+      
+       
+    </script>
+}

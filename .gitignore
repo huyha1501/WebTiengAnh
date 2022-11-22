@@ -1,0 +1,12 @@
+.vs
+*.user
+Debug
+Web.Debug.config
+Web.Release.config
+bin
+obj
+Publish
+Properties
+*.cache
+*.dtmp
+*.bkp

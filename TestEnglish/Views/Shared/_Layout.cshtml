@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - ATEN English</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/Aten.css" media="only screen and (min-width:1024px)" />
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/assets/css/swiper-bundle.min.css" />
+    
+    @RenderSection("styles", false)
+
+    <style>
+       
+    </style>
+
+</head>
+<body>
+    <div class="drawer-panel" id="drawer-panel">
+        <div class="drawer-header">
+            <div class="content-header">
+                <div class="logo">
+                    <a href="/">
+                        <div class="anhlogo" style="background-image:url(/Content/assets/images/logo/logo.png)"></div>
+                    </a>
+                </div>
+                <div class="search">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input placeholder="Nhập từ khóa tìm kiếm " id="search-input" onkeypress="searchKeyPress(event,this)" />
+                    </div>
+                </div>
+                <div class="login-button">
+                    <a class="login" href="/dang-nhap">
+                        Đăng nhập
+                    </a>
+                    <a class="register" href="/dang-ky">
+                        Đăng ký
+                    </a>
+                </div>
+                <div class="user-info show-if-user-logined">
+
+                </div>
+            </div>
+        </div>
+        <div class="menu-bar">
+            <div class="menu-bar-content">
+                <a class="bottom-bar-button" href="/">
+                    <div class="bottom-bar-button-icon"><i class="fa-solid fa-house"></i></div>
+                    <div class="bottom-bar-button-name">Trang chủ</div>
+                </a>
+                <a class="bottom-bar-button" href="/">
+                    <div class="bottom-bar-button-name">Khoá học</div>
+                </a>
+                <a class="bottom-bar-button" href="/">
+                    <div class="bottom-bar-button-name">Tin tức</div>
+                </a>
+                <a class="bottom-bar-button  @(ViewBag.Menu == "test" ? "active" : "")" href="/test">
+                    <div class="bottom-bar-button-name">Kiểm tra</div>
+                </a>
+                <a class="bottom-bar-button" href="/">
+                    <div class="bottom-bar-button-name">Liên hệ</div>
+                </a>
+                <a class="bottom-bar-button  @(ViewBag.Menu == "user" ? "active" : "") show-if-user-logined" href="/tai-khoan">
+                    <div class="bottom-bar-button-name">Tài khoản</div>
+                </a>
+                <a class="bottom-bar-button show-if-user-logined" onclick="LogOut();">
+                    <div class="bottom-bar-button-name"><i class="fa-solid fa-right-from-bracket"></i></div>
+                </a>
+            </div>
+        </div>
+    </div>
+    @RenderBody()
+    <div class="footer">
+        <div class="footer-content">
+            <div class="address-section">
+                <div class="section-title">
+                    ATEN English
+                    <div class="line"></div>
+                </div>
+                <div class="section-content">
+                    <div class="slogan"></div>
+                    <div class="phone">
+                        <i class="fa fa-phone" aria-hidden="true"></i>
+                        Điện thoại : 0379360866
+                    </div>
+                    <div class="email">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        Email : atenenglish@gmail.com
+                    </div>
+                    <div class="address">
+                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+                        Địa chỉ : Hà Nội
+                    </div>
+                </div>
+            </div>
+            <div class="fanpage-section">
+                <div class="section-title">
+                    Liên hệ
+                    <div class="line"></div>
+                </div>
+                <div class="section-content">
+                    <div class="icon-share">
+                        <a href="">
+                            <i class="fa-brands fa-square-facebook"></i>
+                        </a>
+                        <a href="">
+                            <i class="fa-brands fa-facebook-messenger"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="connect-section">
+                <div class="section-title">
+                    Liên kết nhanh
+                    <div class="line"></div>
+                </div>
+                <div class="section-content">
+                    <a class="item-connect">
+                        Khóa học
+                    </a>
+                    <a class="item-connect">
+                        English
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+    <script src="~/Content/assets/js/swiper-bundle.min.js"></script>
+    <script src="~/Content/assets/js/helper.js"></script>
+    <script>
+
+        fetch('/api/user/getuserinfo', {
+            method: 'get',
+            headers: Enum.OptionHeaderDefault
+        }).then(rs => rs.json())
+            .then((rs) => {
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    $('.show-if-user-logined').css('display', 'flex');
+                    $('.login-button').hide();
+                } else {
+                    $('.show-if-user-logined').hide();
+                    $('.login-button').css('display', 'flex');
+                }
+            });
+
+        const LogOut = async function () {
+            if (confirm('Bạn có chắc muốn đăng xuất tài khoản khỏi hệ thống?') === false) return;
+
+            let rq = await fetch('/api/user/logout', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            EraseCookie('UserToken');
+            window.location.href = '/dang-nhap';
+
+           
+        }
+    </script>
+    @RenderSection("scripts", false)
+</body>
+</html>
